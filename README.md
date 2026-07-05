@@ -4,6 +4,8 @@ An ADK 2.0 graph workflow agent that searches 10 major Israeli hotel chains in p
 
 Built with [Google's Agent Development Kit (ADK) 2.0](https://adk.dev/) and [Agents CLI](https://github.com/google/agents-cli), as part of Google's 5-Day AI Agents Intensive Vibe Coding Course.
 
+![Architecture Diagram](./docs/architecture-diagram.svg)
+
 📄 **Full writeup:** see [`WRITEUP.md`](./WRITEUP.md) for the rationale, architecture deep-dive, and known limitations.
 
 ## What it does
