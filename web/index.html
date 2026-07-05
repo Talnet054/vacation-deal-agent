@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vacation Deal Agent - Latest Results</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-glow: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --drop-color: #10b981;
+            --increase-color: #ef4444;
+            --new-color: #3b82f6;
+            --no-change-color: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: radial-gradient(circle at top right, rgba(139, 92, 246, 0.15), transparent 400px),
+                              radial-gradient(circle at top left, rgba(59, 130, 246, 0.15), transparent 400px);
+            background-attachment: fixed;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .rate-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.6rem 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 9999px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .rate-badge span {
+            color: #8b5cf6;
+            margin-left: 0.3rem;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        border-color 0.3s ease, 
+                        box-shadow 0.3s ease;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: transparent;
+            transition: background 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 
+                        0 8px 10px -6px rgba(0, 0, 0, 0.3);
+        }
+
+        .card.status-price-dropped::before {
+            background: var(--drop-color);
+        }
+        .card.status-price-increased::before {
+            background: var(--increase-color);
+        }
+        .card.status-new::before {
+            background: var(--new-color);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .hotel-chain {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .hotel-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            line-height: 1.3;
+            color: var(--text-primary);
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .badge-new {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .badge-drop {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-increase {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-no-change {
+            background: rgba(100, 116, 139, 0.15);
+            color: #94a3b8;
+            border: 1px solid rgba(100, 116, 139, 0.3);
+        }
+
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .meal-plan {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .meal-plan-icon {
+            opacity: 0.7;
+        }
+
+        .price-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .price-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .price-value-usd {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .price-value-ils {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .deal-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.6rem 1.2rem;
+            background: var(--accent-glow);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        .deal-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        .no-data, .loading, .error {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #3b82f6;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Vacation Deal Finder</h1>
+        <p class="subtitle">Latest hotel search and tracking results</p>
+        <div id="exchange-rate-container">
+            <!-- Exchange rate will load here -->
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="hotel-grid" class="grid">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Fetching latest vacation deals...</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function fetchJSON(urls) {
+            for (const url of urls) {
+                try {
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (e) {
+                    console.warn(`Failed to fetch from ${url}:`, e);
+                }
+            }
+            throw new Error('Could not load latest search results JSON file.');
+        }
+
+        function getStatusBadge(hotel) {
+            switch(hotel.status) {
+                case 'new':
+                    return `<span class="badge badge-new">New</span>`;
+                case 'price dropped':
+                    const dropPct = (hotel.drop_percentage * 100).toFixed(1);
+                    return `<span class="badge badge-drop">↓ ${dropPct}%</span>`;
+                case 'price increased':
+                    const increasePct = (Math.abs(hotel.delta) / (hotel.price_usd - hotel.delta) * 100).toFixed(1);
+                    return `<span class="badge badge-increase">↑ ${increasePct}%</span>`;
+                default:
+                    return `<span class="badge badge-no-change">No Change</span>`;
+            }
+        }
+
+        function sortHotels(hotels) {
+            return hotels.sort((a, b) => {
+                // Price dropped first
+                const aIsDrop = a.status === 'price dropped' ? 1 : 0;
+                const bIsDrop = b.status === 'price dropped' ? 1 : 0;
+                if (aIsDrop !== bIsDrop) return bIsDrop - aIsDrop;
+                
+                // Then sort by drop percentage descending
+                if (a.status === 'price dropped' && b.status === 'price dropped') {
+                    return b.drop_percentage - a.drop_percentage;
+                }
+                
+                // Then New hotels
+                const aIsNew = a.status === 'new' ? 1 : 0;
+                const bIsNew = b.status === 'new' ? 1 : 0;
+                if (aIsNew !== bIsNew) return bIsNew - aIsNew;
+                
+                // Default: alphabetical by name
+                return a.name.localeCompare(b.name);
+            });
+        }
+
+        async function loadResults() {
+            const grid = document.getElementById('hotel-grid');
+            const rateContainer = document.getElementById('exchange-rate-container');
+            const paths = ['../data/latest_results.json', 'data/latest_results.json', '/data/latest_results.json'];
+
+            try {
+                const data = await fetchJSON(paths);
+                const rate = data.exchange_rate;
+                const hotels = data.hotels || [];
+
+                // Render Exchange Rate
+                rateContainer.innerHTML = `
+                    <div class="rate-badge">
+                        Exchange Rate: <span>$1 USD = ${rate.toFixed(2)} ILS ₪</span>
+                    </div>
+                `;
+
+                if (hotels.length === 0) {
+                    grid.innerHTML = `
+                        <div class="no-data">
+                            <p>No hotels found in the latest search results.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Sort hotels (deals first)
+                const sortedHotels = sortHotels(hotels);
+
+                // Render Cards
+                grid.innerHTML = sortedHotels.map(hotel => {
+                    const statusClass = 'status-' + hotel.status.replace(' ', '-');
+                    const badgeHtml = getStatusBadge(hotel);
+                    const bookBtnHtml = hotel.url 
+                        ? `<a href="${hotel.url}" target="_blank" class="deal-btn">View Deal</a>`
+                        : `<span class="deal-btn" style="background: rgba(255,255,255,0.05); box-shadow: none; cursor: default; opacity: 0.5;">No Link Available</span>`;
+
+                    return `
+                        <div class="card ${statusClass}">
+                            <div class="card-header">
+                                <div>
+                                    <div class="hotel-chain">${hotel.chain}</div>
+                                    <h3 class="hotel-name">${hotel.name}</h3>
+                                </div>
+                                ${badgeHtml}
+                            </div>
+                            <div class="card-body">
+                                <div class="meal-plan">
+                                    <span class="meal-plan-icon">🍽️</span> ${hotel.meal_plan}
+                                </div>
+                                <div class="price-section">
+                                    <div>
+                                        <div class="price-label">Nightly Price</div>
+                                        <div class="price-value-usd">$${hotel.price_usd.toFixed(2)}</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div class="price-label">Shekel Price</div>
+                                        <div class="price-value-ils">${hotel.price_ils.toLocaleString()} ₪</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                ${bookBtnHtml}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error(err);
+                grid.innerHTML = `
+                    <div class="error">
+                        <p>Error loading latest search results.</p>
+                        <p style="font-size: 0.85rem; margin-top: 0.5rem;">${err.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadResults);
+    </script>
+</body>
+</html>
