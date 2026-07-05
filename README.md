@@ -1,92 +1,42 @@
-# vacation-deal-agent
+# Vacation Deal Agent 🏨✈️
 
-Simple ReAct agent
-Agent generated with `agents-cli` version `1.0.0`
+An ADK 2.0 graph workflow agent that searches 10 major Israeli hotel chains in parallel, tracks nightly prices over time, converts them to shekels at today's live exchange rate, and emails you when a hotel drops 10% or more in price.
 
-## Project Structure
+Built with [Google's Agent Development Kit (ADK) 2.0](https://adk.dev/) and [Agents CLI](https://github.com/google/agents-cli), as part of Google's 5-Day AI Agents Intensive Vibe Coding Course.
 
-```
-vacation-deal-agent/
-├── app/         # Core agent code
-│   ├── agent.py               # Main agent logic
-│   ├── fast_api_app.py        # FastAPI Backend server
-│   └── app_utils/             # App utilities and helpers
-├── tests/                     # Unit, integration, and load tests
-├── GEMINI.md                  # AI-assisted development guide
-└── pyproject.toml             # Project dependencies
-```
+📄 **Full writeup:** see [`WRITEUP.md`](./WRITEUP.md) for the rationale, architecture deep-dive, and known limitations.
 
-> 💡 **Tip:** Use [Antigravity CLI](https://antigravity.google/) for AI-assisted development - project context is pre-configured in `GEMINI.md`.
+## What it does
 
-## Requirements
+Given a city, check-in/check-out dates, number of guests, and meal plan:
 
-Before you begin, ensure you have:
-- **uv**: Python package manager (used for all dependency management in this project) - [Install](https://docs.astral.sh/uv/getting-started/installation/) ([add packages](https://docs.astral.sh/uv/concepts/dependencies/) with `uv add <package>`)
-- **agents-cli**: Agents CLI - Install with `uv tool install google-agents-cli`
-- **Google Cloud SDK**: For GCP services - [Install](https://cloud.google.com/sdk/docs/install)
+1. Searches Fattal, Isrotel, Dan Hotels, VERT, Prima, Astral, Marina Hotels Eilat, and the Israel Canada PLAY/ENJOY brands **concurrently**, using Gemini with Google Search grounding.
+2. Fetches today's live USD→ILS exchange rate the same way.
+3. Compares every hotel's price against its own search history and computes the percentage change.
+4. Emails a summary of any hotel that dropped 10%+ since the last check, with a working booking link.
+5. Serves a live dashboard (`web/index.html`) showing every result, sorted deals-first.
 
-
-## Quick Start
-
-Install `agents-cli` and its skills if not already installed:
+## Setup
 
 ```bash
-uvx google-agents-cli setup
+uv sync
 ```
 
-Install required packages:
+Copy `.env.example` to `.env` and fill in your `GEMINI_API_KEY` and SMTP credentials.
+
+## Running it
 
 ```bash
-agents-cli install
+uv run python run_search.py
 ```
 
-Test the agent with a local web server:
+**View the dashboard:**
 
 ```bash
-agents-cli playground
+python3 -m http.server 8000
+# then open http://localhost:8000/web/index.html
 ```
 
-You can also use features from the [ADK](https://adk.dev/) CLI with `uv run adk`.
+## Tech Stack
 
-## Commands
-
-| Command              | Description                                                                                 |
-| -------------------- | ------------------------------------------------------------------------------------------- |
-| `agents-cli install` | Install dependencies using uv                                                         |
-| `agents-cli playground` | Launch local development environment                                                  |
-| `agents-cli lint`    | Run code quality checks                                                               |
-| `agents-cli eval`    | Evaluate agent behavior (generate, grade, analyze, and more — see `agents-cli eval --help`) |
-| `uv run pytest tests/unit tests/integration` | Run unit and integration tests                                                        || [A2A Inspector](https://github.com/a2aproject/a2a-inspector) | Launch A2A Protocol Inspector                                                        |
-
-## 🛠️ Project Management
-
-| Command | What It Does |
-|---------|--------------|
-| `agents-cli scaffold enhance` | Add CI/CD pipelines and Terraform infrastructure |
-| `agents-cli infra cicd` | One-command setup of entire CI/CD pipeline + infrastructure |
-| `agents-cli scaffold upgrade` | Auto-upgrade to latest version while preserving customizations |
-
----
-
-## Development
-
-Edit your agent logic in `app/agent.py` and test with `agents-cli playground` - it auto-reloads on save.
-
-## Deployment
-
-```bash
-gcloud config set project <your-project-id>
-agents-cli deploy
-```
-
-To add CI/CD and Terraform, run `agents-cli scaffold enhance`.
-To set up your production infrastructure, run `agents-cli infra cicd`.
-
-## Observability
-
-Built-in telemetry exports to Cloud Trace, BigQuery, and Cloud Logging.
-
-## A2A Inspector
-
-This agent supports the [A2A Protocol](https://a2a-protocol.org/). Use the [A2A Inspector](https://github.com/a2aproject/a2a-inspector) to test interoperability.
-See the [A2A Inspector docs](https://github.com/a2aproject/a2a-inspector) for details.
+Google ADK 2.0 · Gemini (`gemini-flash-latest`) with Google Search grounding · Agents CLI · Python `asyncio` · `smtplib` · vanilla HTML/CSS/JS
